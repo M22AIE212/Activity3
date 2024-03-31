@@ -12,7 +12,7 @@ transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=3),
     transforms.ToTensor(),  # Convert images to PyTorch tensors
     transforms.Resize((224, 224)),  # Resize images to 224x224,
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalize images with mean and standard deviation
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))  # Normalize images with mean and standard deviation
 ])
 
 # Load Fashion MNIST dataset
