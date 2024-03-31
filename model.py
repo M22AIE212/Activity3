@@ -43,30 +43,30 @@ device = "cuda"
 for optimizer_name in optimizers_list :
 
     # Load pre-trained ResNet101 model
-    resnet50 = models.resnet50(pretrained=True)
+    resnet18 = models.resnet18(pretrained=True)
 
     # Freeze all layers except the last one
-    for param in resnet50.parameters():
-      resnet50.requires_grad = False
+    for param in resnet18.parameters():
+      resnet18.requires_grad = False
 
     # Modify the last layer to match the number of classes in Fashion MNIST (10)
-    num_ftrs = resnet50.fc.in_features
-    resnet50.fc = nn.Linear(num_ftrs, 10)
+    num_ftrs = resnet18.fc.in_features
+    resnet18.fc = nn.Linear(num_ftrs, 10)
 
-    resnet50.fc.weight.requires_grad = True
-    resnet50.fc.bias.requires_grad = True
+    resnet18.fc.weight.requires_grad = True
+    resnet18.fc.bias.requires_grad = True
 
-    resnet50 = resnet50.to(device)
+    resnet18 = resnet18.to(device)
 
     print(f"Training with {optimizer_name} optimizer...")
     if optimizer_name == "adam":
-        optimizer = optim.Adam(resnet50.parameters())
+        optimizer = optim.Adam(resnet18.parameters())
     elif optimizer_name == "adagrad":
-        optimizer = optim.Adagrad(resnet50.parameters())
+        optimizer = optim.Adagrad(resnet18.parameters())
     elif optimizer_name == "adadelta":
-        optimizer = optim.Adadelta(resnet50.parameters())
+        optimizer = optim.Adadelta(resnet18.parameters())
 
-    resnet50.train()  # Set model to training mode
+    resnet18.train()  # Set model to training mode
     train_losses = []
     train_accuracy = []
 
@@ -82,7 +82,7 @@ for optimizer_name in optimizers_list :
 
             optimizer.zero_grad()
 
-            outputs = resnet50(inputs)
+            outputs = resnet18(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -101,7 +101,7 @@ for optimizer_name in optimizers_list :
         train_accuracy.append(100 * correct / total)
 
         # Evaluate model on test set
-        resnet50.eval()  # Set model to evaluation mode
+        resnet18.eval()  # Set model to evaluation mode
         correct_top5 = 0
         total = 0
         with torch.no_grad():
@@ -109,7 +109,7 @@ for optimizer_name in optimizers_list :
                 images, labels = data
                 images = images.to(device)
                 labels = labels.to(device)
-                outputs = resnet50(images)
+                outputs = resnet18(images)
                 _, predicted = torch.topk(outputs, 5, dim=1)
                 total += labels.size(0)
                 for i in range(len(labels)):
